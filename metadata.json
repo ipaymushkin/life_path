@@ -1,0 +1,6 @@
+{
+  "name": "Путь жизни",
+  "description": "Служба профориентации и психологического анализа на основе трех апробированных методик и ИИ-аналитики для выпускников и людей, меняющих профессию.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
