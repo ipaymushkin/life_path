@@ -27,6 +27,7 @@ import {
 
 import { Message, RecommendedJob, AnalysisResponse, TestContext, CattellScores, EysenckScores, AkhrarovaScores } from "./types";
 import { cattellQuestions, cattellFactorInfo, akhrarovaQuestions, akhrarovaDomainDescriptions, eysenckQuestions } from "./data";
+import { generateClientSideReport, generateClientSideChatMessage } from "./utils/aiSimulator";
 import LandingHero from "./components/LandingHero";
 import EysenckChart from "./components/EysenckChart";
 
@@ -178,7 +179,7 @@ export default function App() {
     return { extraversion, neuroticism, lie, personalityType };
   };
 
-  // Submit results to server API for Gemini AI recommendation
+  // Submit results to local client-side generator for diagnostic/career recommendations
   const handleRunAnalysis = async () => {
     setStep("analyzing");
     setIsLoadingAnalysis(true);
@@ -188,25 +189,17 @@ export default function App() {
     const akhrarovaData = computedAkhrarova();
     const eysenckData = computedEysenck();
 
-    const requestPayload = {
-      cattell: cattellData,
-      akhrarova: akhrarovaData,
-      eysenck: eysenckData,
-      context
-    };
-
     try {
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestPayload)
-      });
+      // Simulate highly thorough analytical computation delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-      if (!response.ok) {
-        throw new Error("Не удалось получить ответ от сервера ИИ-аналитики.");
-      }
-
-      const responseData: AnalysisResponse = await response.json();
+      const responseData: AnalysisResponse = generateClientSideReport(
+        cattellData,
+        akhrarovaData,
+        eysenckData,
+        context
+      );
+      
       setAnalysis(responseData);
       
       // Save all tests and responses so that page refresh persists nicely
@@ -240,7 +233,7 @@ export default function App() {
       setActiveTab("jobs");
     } catch (e: any) {
       console.error(e);
-      setAnalysisError(e.message || "Ошибка подключения к сети. Пожалуйста, попробуйте отправить заново.");
+      setAnalysisError(e.message || "Ошибка построения аналитического отчета.");
       setStep("testing");
       setTestSubStep(3); // return back to last wizard page
     } finally {
@@ -248,7 +241,7 @@ export default function App() {
     }
   };
 
-  // Submit message to chat advisor api
+  // Submit message to local client-side interactive advisor generator
   const handleSendChatMessage = async (textToSend?: string) => {
     const rawMessage = textToSend || userInput;
     if (!rawMessage.trim() || isSendingChat) return;
@@ -276,21 +269,19 @@ export default function App() {
 `;
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: newMessages,
-          testSummary: summaryContext
-        })
-      });
+      // Simulate real-time consultant response latency
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-      if (!response.ok) {
-        throw new Error("Не удалось получить ответ ИИ-ассистента.");
-      }
+      const replyText = generateClientSideChatMessage(
+        query,
+        newMessages,
+        summaryContext,
+        context,
+        eysenckData,
+        akhrarovaData
+      );
 
-      const data = await response.json();
-      const updatedMessages: Message[] = [...newMessages, { role: "assistant" as const, content: data.text }];
+      const updatedMessages: Message[] = [...newMessages, { role: "assistant" as const, content: replyText }];
       setChatMessages(updatedMessages);
       saveStateToLocalStorage("wayoflife_messages", updatedMessages);
     } catch (e: any) {

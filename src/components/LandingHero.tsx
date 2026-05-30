@@ -82,7 +82,7 @@ export default function LandingHero({ context, onUpdateContext, onStartDiagnosti
                 <td className="py-4 px-4 text-slate-600 flex items-center gap-1"><AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" /> Крайне неудобная и устаревшая навигация</td>
               </tr>
               <tr>
-                <td className="py-4 px-4 font-bold text-amber-600">Skillfactory (Clue)</td>
+                <td className="py-4 px-4 font-bold text-amber-600">Skillfactory</td>
                 <td className="py-4 px-4 text-slate-600">Поверхностные маркетинговые тесты без клинической основы</td>
                 <td className="py-4 px-4 text-slate-600">Шаблонное навязывание платных долгосрочных курсов</td>
                 <td className="py-4 px-4 text-slate-600 flex items-center gap-1"><AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" /> Фокус на продажах, а не на самовыражении человека</td>
